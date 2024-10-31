@@ -129,7 +129,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .name(request.getName())
                 .build();
 
-        user.setArtist(artist);
         artist.setUser(user);
 
         userRepository.save(user);

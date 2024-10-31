@@ -20,6 +20,7 @@ import com.example.demo.service.CloudinaryService;
 import com.example.demo.service.SongService;
 import com.example.demo.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +57,12 @@ public class ArtistServiceImpl implements ArtistService {
     private final SongRepository songRepository;
     private final SongService songService;
     private final ArtistSearchRepository artistSearchRepository;
+
+    @Value("${CLOUDINARY_MAX_IMAGE_SIZE}")
+    private int maxImageSize;
+
+    @Value("${CLOUDINARY_MAX_AUDIO_SIZE}")
+    private int maxAudioSize;
 
     @Override
     @Transactional
@@ -122,8 +129,7 @@ public class ArtistServiceImpl implements ArtistService {
 
         MultipartFile imageFile = request.getImageFile();
 
-        if (imageFile == null || imageFile.isEmpty())
-            throw new ImageUploadException("Failed to upload image");
+        isImageValid(imageFile);
 
         try {
             String imageUrl = cloudinaryService.uploadImage(imageFile);
@@ -150,10 +156,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -167,10 +174,8 @@ public class ArtistServiceImpl implements ArtistService {
         MultipartFile imageFile = songRequest.getImageFile();
         MultipartFile songFile = songRequest.getSongFile();
 
-        if (imageFile == null || imageFile.isEmpty())
-            throw new ImageUploadException("Failed to upload image");
-        if (songFile == null || songFile.isEmpty())
-            throw new AudioUploadException("Failed to upload audio");
+        isImageValid(imageFile);
+        isAudioValid(songFile);
 
         String imageUrl = cloudinaryService.uploadImage(imageFile);
         if (imageUrl == null) {
@@ -224,10 +229,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -242,8 +248,7 @@ public class ArtistServiceImpl implements ArtistService {
 
         MultipartFile imageFile = albumRequest.getImageFile();
 
-        if (imageFile == null || imageFile.isEmpty())
-            throw new ImageUploadException("Failed to upload image");
+        isImageValid(imageFile);
 
         try {
             String imageUrl = cloudinaryService.uploadImage(imageFile);
@@ -267,10 +272,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -282,7 +288,6 @@ public class ArtistServiceImpl implements ArtistService {
             throw new AccessDenyException("You are not the artist of this song");
         if (song.getArtists().size() != 1 || !song.getArtists().contains(artist))
             throw new AccessDenyException("A song can only be added to an album if it has exactly one artist.");
-
 
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new ResourceNotFoundException("Album not found"));
@@ -301,10 +306,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -319,10 +325,8 @@ public class ArtistServiceImpl implements ArtistService {
         MultipartFile imageFile = songRequest.getImageFile();
         MultipartFile songFile = songRequest.getSongFile();
 
-        if (imageFile == null || imageFile.isEmpty())
-            throw new ImageUploadException("Failed to upload image");
-        if (songFile == null || songFile.isEmpty())
-            throw new AudioUploadException("Failed to upload audio");
+        isImageValid(imageFile);
+        isAudioValid(songFile);
 
         String imageUrl = cloudinaryService.uploadImage(imageFile);
         if (imageUrl == null) {
@@ -379,10 +383,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -395,8 +400,7 @@ public class ArtistServiceImpl implements ArtistService {
 
         MultipartFile imageFile = albumRequest.getImageFile();
 
-        if (imageFile == null || imageFile.isEmpty())
-            throw new ImageUploadException("Failed to upload image");
+        isImageValid(imageFile);
 
         try {
             String imageUrl = cloudinaryService.uploadImage(imageFile);
@@ -416,18 +420,18 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
 
         MultipartFile imageFile = request.getImageFile();
 
-        if (imageFile == null || imageFile.isEmpty())
-            throw new ImageUploadException("Failed to upload image");
+        isImageValid(imageFile);
 
         try {
             String imageUrl = cloudinaryService.uploadImage(imageFile);
@@ -446,10 +450,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -464,10 +469,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -483,10 +489,11 @@ public class ArtistServiceImpl implements ArtistService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
-        User user = userRepository.findByUsernameWithArtist(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+        Long userId = userRepository.findIdByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Artist artist = user.getArtist();
+        Artist artist = artistRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
@@ -597,5 +604,21 @@ public class ArtistServiceImpl implements ArtistService {
         return artists.stream()
                 .map(artistMapper::toSearchArtistResponse)
                 .toList();
+    }
+
+    private void isImageValid(MultipartFile imageFile) {
+        if (imageFile == null || imageFile.isEmpty())
+            throw new ImageUploadException("Failed to upload image");
+        if (imageFile.getSize() > maxImageSize)
+            throw new ImageUploadException("Image file size exceeds the maximum limit of " +
+                    (maxImageSize / (1024 * 1024)) + " MB");
+    }
+
+    private void isAudioValid(MultipartFile songFile) {
+        if (songFile == null || songFile.isEmpty())
+            throw new AudioUploadException("Failed to upload audio");
+        if (songFile.getSize() > maxAudioSize)
+            throw new AudioUploadException("Audio file size exceeds the maximum limit of " +
+                    (maxAudioSize / (1024 * 1024)) + " MB");
     }
 }

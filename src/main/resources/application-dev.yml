@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+open:
+  api:
+    title: ${OPEN_API_TITLE}
+    version: ${OPEN_API_VERSION}
+    description: ${OPEN_API_DESCRIPTION}
+    serverUrl: ${OPEN_API_SERVER_URL}
+    serverName: ${OPEN_API_SERVER_NAME}

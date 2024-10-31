@@ -21,13 +21,22 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
     @Query("SELECT DISTINCT u FROM User u " +
-            "JOIN FETCH u.roles " +
+            "LEFT JOIN FETCH u.roles " +
             "WHERE u.username = :username")
     Optional<User> findByUsernameWithRoles(@Param("username") String username);
     @Query("SELECT DISTINCT u FROM User u " +
             "LEFT JOIN FETCH u.addresses " +
             "WHERE u.username = :username")
     Optional<User> findByUsernameWithAddresses(@Param("username") String username);
+    @Query("SELECT DISTINCT u FROM User u " +
+            "LEFT JOIN FETCH u.playlists " +
+            "WHERE u.username = :username")
+    Optional<User> findByUsernameWithPlaylists(@Param("username") String username);
+    @Query("SELECT DISTINCT u FROM User u " +
+            "JOIN FETCH u.playlists p " +
+            "JOIN FETCH p.songs s " +
+            "WHERE u.username = :username")
+    Optional<User> findByUsernameWithPlaylistsAndSongs(@Param("username") String username);
     @Query("SELECT DISTINCT u FROM User u " +
             "JOIN FETCH u.roles " +
             "LEFT JOIN FETCH u.addresses " +
@@ -43,7 +52,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query("SELECT DISTINCT u FROM User u " +
             "WHERE u.id IN :ids")
     List<User> findAllByIdsAndSort(@Param("ids") List<Long> ids, Sort sort);
-    @Query("SELECT u FROM User u JOIN Artist a WHERE u.username = : username")
-    Optional<User> findByUsernameWithArtist(@Param("username") String username);
-
+    @Query("SELECT u.id FROM User u WHERE u.username = :username")
+    Optional<Long> findIdByUsername(@Param("username") String username);
+    @Query("SELECT u FROM User u WHERE u.password IS NULL OR u.password = ''")
+    List<User> findByPasswordIsNullOrPasswordIsEmpty();
 }

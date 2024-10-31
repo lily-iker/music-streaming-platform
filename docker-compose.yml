@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: lilyiker
+      MYSQL_DATABASE: music_db
+    ports:
+      - '3307:3306'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - music_data:/var/lib/mysql
+      - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - '8787:80'
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    networks:
+      - net
+    depends_on:
+      - mysql
+
+  backend:
+    container_name: api-service
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        SPRING_PROFILE: ${SPRING_PROFILE}
+    env_file:
+      - .env.${SPRING_PROFILE}
+    ports:
+      - '${HOST_PORT}:${SERVER_PORT}'
+    networks:
+      - net
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  music_data:

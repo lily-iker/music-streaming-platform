@@ -67,7 +67,6 @@ public class Artist extends AbstractEntity {
     public void saveUser(User user) {
         if (user != null) {
             this.user = user;
-            user.setArtist(this);
         }
     }
 

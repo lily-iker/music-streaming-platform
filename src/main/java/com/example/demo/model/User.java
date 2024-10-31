@@ -1,8 +1,6 @@
 package com.example.demo.model;
 
 import com.example.demo.constant.Gender;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -68,23 +66,6 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ListeningHistory> listeningHistories = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id")
-    @JsonIgnore
-    private Artist artist;
-
-    @Column(name = "account_non_expired")
-    private Boolean accountNonExpired;
-
-    @Column(name = "account_non_locked")
-    private Boolean accountNonLocked;
-
-    @Column(name = "credentials_non_expired")
-    private Boolean credentialsNonExpired;
-
-    @Column(name = "enabled")
-    private Boolean enabled;
-
     public void saveAddress(Address address) {
         if (address != null) {
             if (this.addresses == null) {
@@ -137,22 +118,22 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountNonExpired;
+        return active;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return accountNonLocked;
+        return active;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
+        return active;
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return active;
     }
 }
 

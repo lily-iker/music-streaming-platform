@@ -102,7 +102,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception e, WebRequest request) {
-        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().toString(), request);
+        if (e.getCause() == null) {
+            return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), request);
+        }
+        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage(), request);
     }
 
 }

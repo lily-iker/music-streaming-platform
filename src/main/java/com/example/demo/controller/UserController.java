@@ -55,15 +55,6 @@ public class UserController {
                 userService.updateMyInfo(request));
     }
 
-    @GetMapping("/list")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseData<List<UserRequest>> getUserList(@PathVariable String firstName) {
-        return new ResponseData<>(HttpStatus.OK.value(),
-                "user with first name: " + firstName,
-                List.of(new UserRequest(),
-                        new UserRequest()));
-    }
-
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseData<?> getAllUser(
@@ -103,7 +94,7 @@ public class UserController {
 
     @DeleteMapping("/delete-role")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseData<?> deleteRoleToUser(@RequestParam String username,
+    public ResponseData<?> deleteRoleFromUser(@RequestParam String username,
                                             @RequestParam String roleName) {
         return new ResponseData<>(HttpStatus.OK.value(),
                 roleName + " deleted from " + username,
