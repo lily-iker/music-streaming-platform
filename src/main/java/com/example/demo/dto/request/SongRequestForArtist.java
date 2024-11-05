@@ -18,10 +18,6 @@ public class SongRequestForArtist {
     @Min(value = 60, message = "Song's duration must be at least 1 minutes")
     private Integer duration;
 
-    private MultipartFile imageFile;
-
-    private MultipartFile songFile;
-
     @NotEmpty(message = "Song's genre must have at least 1")
     private Set<GenreRequest> genres;
 

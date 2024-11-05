@@ -12,6 +12,4 @@ import java.io.Serializable;
 public class UpdateArtistInfoRequest implements Serializable {
     @Size(max = 2048, message = "Artist's bio should be between 0 and 2048 characters")
     private String bio;
-
-    private MultipartFile imageFile;
 }

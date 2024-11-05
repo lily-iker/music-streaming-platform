@@ -42,13 +42,11 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional
-    public long addAlbum(String artistName, AlbumRequestForArtist albumRequest) {
+    public long addAlbum(String artistName, AlbumRequestForArtist albumRequest, MultipartFile imageFile) {
         Artist artist = artistRepository.findByName(artistName)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         Album album = new Album();
-
-        MultipartFile imageFile = albumRequest.getImageFile();
 
         if (imageFile == null || imageFile.isEmpty())
             throw new ImageUploadException("Failed to upload image");
@@ -96,11 +94,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional
-    public long updateAlbum(Long id, AlbumRequestForArtist albumRequest) {
+    public long updateAlbum(Long id, AlbumRequestForArtist albumRequest, MultipartFile imageFile) {
         Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Album not found"));
-
-        MultipartFile imageFile = albumRequest.getImageFile();
 
         if (imageFile == null || imageFile.isEmpty())
             throw new ImageUploadException("Failed to upload image");

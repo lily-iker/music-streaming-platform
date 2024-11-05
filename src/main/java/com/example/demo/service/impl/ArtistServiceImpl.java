@@ -123,11 +123,9 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional
-    public long updateArtist(Long id, UpdateArtistInfoRequest request) {
+    public long updateArtist(Long id, UpdateArtistInfoRequest request, MultipartFile imageFile) {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
-
-        MultipartFile imageFile = request.getImageFile();
 
         isImageValid(imageFile);
 
@@ -152,7 +150,8 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional
-    public long addMySong(SongRequestForArtist songRequest) throws IOException{
+    public long addMySong(SongRequestForArtist songRequest,
+                          MultipartFile imageFile, MultipartFile songFile) throws IOException{
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
@@ -170,9 +169,6 @@ public class ArtistServiceImpl implements ArtistService {
 
         if (songExisted)
             throw new DataInUseException("You already have a song with that name");
-
-        MultipartFile imageFile = songRequest.getImageFile();
-        MultipartFile songFile = songRequest.getSongFile();
 
         isImageValid(imageFile);
         isAudioValid(songFile);
@@ -225,7 +221,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional
-    public long addMyAlbum(AlbumRequestForArtist albumRequest) {
+    public long addMyAlbum(AlbumRequestForArtist albumRequest, MultipartFile imageFile) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
@@ -245,8 +241,6 @@ public class ArtistServiceImpl implements ArtistService {
             throw new DataInUseException("You already have a album with that name");
 
         Album album = new Album();
-
-        MultipartFile imageFile = albumRequest.getImageFile();
 
         isImageValid(imageFile);
 
@@ -302,7 +296,8 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional
-    public long updateMySong(Long songId, SongRequestForArtist songRequest) throws IOException {
+    public long updateMySong(Long songId, SongRequestForArtist songRequest,
+                             MultipartFile imageFile, MultipartFile songFile) throws IOException {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
@@ -321,9 +316,6 @@ public class ArtistServiceImpl implements ArtistService {
                 || !songResponse.getArtistNames().contains(artist.getName())) {
             throw new AccessDenyException("You are not one of the artists for this song");
         }
-
-        MultipartFile imageFile = songRequest.getImageFile();
-        MultipartFile songFile = songRequest.getSongFile();
 
         isImageValid(imageFile);
         isAudioValid(songFile);
@@ -379,7 +371,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional
-    public long updateMyAlbum(Long albumId, AlbumRequestForArtist albumRequest) {
+    public long updateMyAlbum(Long albumId, AlbumRequestForArtist albumRequest, MultipartFile imageFile) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
@@ -398,8 +390,6 @@ public class ArtistServiceImpl implements ArtistService {
         if (!artist.getAlbums().contains(album))
             throw new AccessDenyException("You are not the artist of this album");
 
-        MultipartFile imageFile = albumRequest.getImageFile();
-
         isImageValid(imageFile);
 
         try {
@@ -416,7 +406,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional
-    public long updateMyArtistPage(UpdateArtistInfoRequest request) {
+    public long updateMyArtistPage(UpdateArtistInfoRequest request, MultipartFile imageFile) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String username = securityContext.getAuthentication().getName();
 
@@ -428,8 +418,6 @@ public class ArtistServiceImpl implements ArtistService {
 
         if (artist == null)
             throw new InvalidDataException("There seems to be an issue with your artist profile. Please contact support");
-
-        MultipartFile imageFile = request.getImageFile();
 
         isImageValid(imageFile);
 

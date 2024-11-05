@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -40,10 +41,11 @@ public class ArtistController {
     @PutMapping("/{artistId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseData<Long> updateArtist(@PathVariable Long artistId,
-                                           @Valid @RequestBody UpdateArtistInfoRequest request) {
+                                           @Valid @RequestPart UpdateArtistInfoRequest request,
+                                           @RequestPart MultipartFile imageFile) {
         return new ResponseData<>(HttpStatus.OK.value(),
                 "Update artist success",
-                artistService.updateArtist(artistId, request));
+                artistService.updateArtist(artistId, request, imageFile));
     }
 
     @DeleteMapping("/{artistId}")
@@ -56,18 +58,21 @@ public class ArtistController {
 
     @PostMapping("/add-my-song")
     @PreAuthorize("hasRole('ARTIST')")
-    public ResponseData<Long> addMySong(@Valid @RequestBody SongRequestForArtist songRequest) throws IOException {
+    public ResponseData<Long> addMySong(@Valid @RequestPart SongRequestForArtist songRequest,
+                                        @RequestPart MultipartFile imageFile,
+                                        @RequestPart MultipartFile songFile) throws IOException {
         return new ResponseData<>(HttpStatus.CREATED.value(),
                 "Add song to artist success",
-                artistService.addMySong(songRequest));
+                artistService.addMySong(songRequest, imageFile, songFile));
     }
 
     @PostMapping("/add-my-album")
     @PreAuthorize("hasRole('ARTIST')")
-    public ResponseData<Long> addMyAlbum(@Valid @RequestBody AlbumRequestForArtist albumRequest) {
+    public ResponseData<Long> addMyAlbum(@Valid @RequestPart AlbumRequestForArtist albumRequest,
+                                         @RequestPart MultipartFile imageFile) {
         return new ResponseData<>(HttpStatus.CREATED.value(),
                 "Album added successfully",
-                artistService.addMyAlbum(albumRequest));
+                artistService.addMyAlbum(albumRequest, imageFile));
     }
 
     @PostMapping("/add-song-to-album")
@@ -82,27 +87,31 @@ public class ArtistController {
     @PutMapping("/song/{songId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseData<Long> updateMySong(@PathVariable Long songId,
-                                           @Valid @RequestBody SongRequestForArtist songRequest) throws IOException {
+                                           @Valid @RequestPart SongRequestForArtist songRequest,
+                                           @RequestPart MultipartFile imageFile,
+                                           @RequestPart MultipartFile songFile) throws IOException {
         return new ResponseData<>(HttpStatus.OK.value(),
                 "Update song of artist success",
-                artistService.updateMySong(songId, songRequest));
+                artistService.updateMySong(songId, songRequest, imageFile, songFile));
     }
 
     @PutMapping("/album/{albumId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseData<Long> updateMyAlbum(@PathVariable Long albumId,
-                                            @Valid @RequestBody AlbumRequestForArtist albumRequest) {
+                                            @Valid @RequestPart AlbumRequestForArtist albumRequest,
+                                            @RequestPart MultipartFile imageFile) {
         return new ResponseData<>(HttpStatus.OK.value(),
                 "Album updated successfully",
-                artistService.updateMyAlbum(albumId, albumRequest));
+                artistService.updateMyAlbum(albumId, albumRequest, imageFile));
     }
 
     @PutMapping("/update-my-artist-page")
     @PreAuthorize("hasRole('ARTIST')")
-    public ResponseData<Long> updateMyArtistPage(@Valid @RequestBody UpdateArtistInfoRequest request) {
+    public ResponseData<Long> updateMyArtistPage(@Valid @RequestPart UpdateArtistInfoRequest request,
+                                                 @RequestPart MultipartFile imageFile) {
         return new ResponseData<>(HttpStatus.OK.value(),
                 "Update artist page success",
-                artistService.updateMyArtistPage(request));
+                artistService.updateMyArtistPage(request, imageFile));
     }
 
     @DeleteMapping("/song/{songId}")

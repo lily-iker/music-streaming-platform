@@ -10,5 +10,4 @@ import org.springframework.web.multipart.MultipartFile;
 public class AlbumRequestForArtist {
     @NotBlank(message = "Album's name can not be blank")
     private String name;
-    private MultipartFile imageFile;
 }
