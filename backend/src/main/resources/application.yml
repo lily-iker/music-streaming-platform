@@ -1,0 +1,35 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: Music Streaming Platform
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    generate-ddl: false
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+jwt:
+  accessExpiryTime: ${JWT_ACCESS_EXPIRY_TIME}
+  refreshExpiryTime: ${JWT_REFRESH_EXPIRY_TIME}
+  secretKey: ${JWT_SECRET_KEY}
+  refreshKey: ${JWT_REFRESH_KEY}
+
+open:
+  api:
+    title: ${OPEN_API_TITLE}
+    version: ${OPEN_API_VERSION}
+    description: ${OPEN_API_DESCRIPTION}
+    serverUrl: ${OPEN_API_SERVER_URL}
+    serverName: ${OPEN_API_SERVER_NAME}
+
