@@ -322,7 +322,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public List<?> getMadeForYouSongs() {
-        List<Long> songIds = List.of(1L, 2L, 3L, 4L, 5L, 6L);
+        List<Long> songIds = List.of(12L, 24L, 25L, 29L, 32L, 23L);
         return songsToSearchSongResponses(songRepository.findSongsWithArtistsByIds(songIds));
     }
 
