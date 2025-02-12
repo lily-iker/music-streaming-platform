@@ -30,7 +30,7 @@ A fullstack music streaming service built with Spring Boot and Reactjs that allo
 - **Media Storage:** Cloudinary
 - **Build Tool:** Maven
 - **API Documentation:** SpringDoc OpenAPI
-- **Frontend**: React, TypeScript, Tailwind CSS, Shadcn/ui
+- **Frontend**: React, TypeScript, Zustand, Tailwind CSS, Shadcn/ui
 
 ## Prerequisites
 
